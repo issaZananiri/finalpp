@@ -9,13 +9,13 @@ import * as serviceWorker from './serviceWorker';
 import reducer from './store/reducer';
 import config from './config';
 
+
 const store = createStore(reducer);
 
 const app = (
     <Provider store={store}>
         <BrowserRouter basename={config.basename}>
             {/* basename="/Delivery" */}
-            
             <App />
         </BrowserRouter>
     </Provider>

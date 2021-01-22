@@ -47,7 +47,7 @@ class GoogleMap extends React.Component {
         let datum = [
             {key: "Received", y:this.received(), color: "#ff8a65"},
         
-            {key: "Not Received", y: 14, color: "#1de9b6"},
+            {key: "Not Received", y: this.state.packages.length -this.received() , color: "#1de9b6"},
         
         ];
         return datum;
@@ -73,12 +73,18 @@ class GoogleMap extends React.Component {
     }
 
   
-
+    checkLocalStorage() {
+        const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        if (!currentUser) {
+            return {}
+        }
+        return currentUser
+    }
    
 
     render() {
         const { position } = this.state;
-
+        const currenUser =  this.checkLocalStorage()
         return (<div className='container'>
   
             <Aux>
@@ -90,7 +96,7 @@ class GoogleMap extends React.Component {
                               
                             </Card.Header>
                             <Card.Body>
-                               <MapContainer lat={32.264346} lan ={35.008223}/>
+                               <MapContainer lat={currenUser.lat} lan ={currenUser.lan}/>
                              
                             </Card.Body>
                         </Card>

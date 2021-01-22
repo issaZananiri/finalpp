@@ -3,7 +3,7 @@ import { Row, Col, Card, Table, Label } from 'react-bootstrap';
 import axios from "axios";
 import Aux from "../../hoc/_Aux";
 import avatar1 from '../../assets/images/user/avatar-2.jpg';
-
+import { observer, inject } from 'mobx-react'
 
 
 
@@ -36,21 +36,25 @@ class Dashboard extends React.Component {
                                 <td>
                                     <h6 className="text-muted"><i className="fa fa-circle text-c-green f-10 m-r-15" />11 MAY 12:56</h6>
                                 </td>
-                                <td><a href='track' className="label theme-bg2 text-white f-12">Track</a><a href='Popup' className="label theme-bg text-white f-12">Assign Orders</a>
+                                <td><a href='track' onClick={()=>this.save(val)} className="label theme-bg2 text-white f-12">Track</a><a href='Popup' className="label theme-bg text-white f-12">Assign Orders</a>
 
                                 </td>
                                 <td><span name={val._id} onClick={() => this.removeDriver(val._id)}><i className="fa fa-times trash1"></i></span></td>
 
                             </tr>
-
-
-
                         </tbody>
                     </Table>
                 </Card.Body>
             </Card>
         )
     }
+
+    
+    save(userName){
+        localStorage.setItem('currentUser', JSON.stringify(userName))    
+    }
+
+    
 
     orders = async () => {
         const ordersFromServer = await axios.get('http://localhost:8080/totalOrders')
@@ -64,7 +68,6 @@ class Dashboard extends React.Component {
         console.log(driversFromServer.data.drivers[0].name)
         this.setState({
             drivers: driversFromServer.data.drivers
-
         })
     }
 
@@ -82,8 +85,6 @@ class Dashboard extends React.Component {
         await axios.delete(`http://localhost:8080/deleteaccount/${e}`)
         this.drivers()
     }
-
-
 
     componentDidMount() {
         this.orders()
@@ -189,4 +190,6 @@ class Dashboard extends React.Component {
         );
     }
 }
-export default Dashboard;
+
+
+export default Dashboard
