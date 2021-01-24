@@ -26,6 +26,7 @@ a.btn-theme {
         box-shadow: none;
     }
 }
+
 .add1{
     margin-left: 780px;
     /* margin-top: 20px; */
@@ -33,9 +34,11 @@ a.btn-theme {
     /* size: b4; */
     font-size: 30px;
 }
-
+h6.mb-1 {
+    width: 100px;
+}
 .trash1{
-    margin-left: 13px;
+    float: right;
     /* margin-top: 20px; */
     color: #a72828;
     /* size: b4; */

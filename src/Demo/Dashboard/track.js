@@ -5,6 +5,7 @@ import {Row, Col, Card, Form, InputGroup, Button} from 'react-bootstrap';
 import {Map,GoogleMapReact , Marker, GoogleApiWrapper, InfoWindow, Polyline, Polygon}  from 'google-maps-react';
 import Aux from "../../hoc/_Aux";
 import  MapContainer  from './MapComponents/LeafletMap';
+import ReactSnackBar from "react-js-snackbar";
 
 
 class GoogleMap extends React.Component {
@@ -78,6 +79,7 @@ class GoogleMap extends React.Component {
         if (!currentUser) {
             return {}
         }
+        console.log(currentUser)
         return currentUser
     }
    
@@ -96,7 +98,7 @@ class GoogleMap extends React.Component {
                               
                             </Card.Header>
                             <Card.Body>
-                               <MapContainer lat={currenUser.lat} lan ={currenUser.lan}/>
+                              {currenUser ? <MapContainer lat={currenUser.lat ||0} lan ={currenUser.lan ||0}/> : <div />}
                              
                             </Card.Body>
                         </Card>
