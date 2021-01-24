@@ -5,6 +5,7 @@ import {Row, Col, Card, Form, InputGroup, Button} from 'react-bootstrap';
 import {Map,GoogleMapReact , Marker, GoogleApiWrapper, InfoWindow, Polyline, Polygon}  from 'google-maps-react';
 import Aux from "../../hoc/_Aux";
 import  MapContainer  from './MapComponents/LeafletMap';
+import ReactSnackBar from "react-js-snackbar";
 
 
 class GoogleMap extends React.Component {
@@ -47,7 +48,7 @@ class GoogleMap extends React.Component {
         let datum = [
             {key: "Received", y:this.received(), color: "#ff8a65"},
         
-            {key: "Not Received", y: 14, color: "#1de9b6"},
+            {key: "Not Received", y: this.state.packages.length -this.received() , color: "#1de9b6"},
         
         ];
         return datum;
@@ -73,12 +74,19 @@ class GoogleMap extends React.Component {
     }
 
   
-
+    checkLocalStorage() {
+        const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        if (!currentUser) {
+            return {}
+        }
+        console.log(currentUser)
+        return currentUser
+    }
    
 
     render() {
         const { position } = this.state;
-
+        const currenUser =  this.checkLocalStorage()
         return (<div className='container'>
   
             <Aux>
@@ -90,7 +98,7 @@ class GoogleMap extends React.Component {
                               
                             </Card.Header>
                             <Card.Body>
-                               <MapContainer lat={32.264346} lan ={35.008223}/>
+                              {currenUser ? <MapContainer lat={currenUser.lat ||0} lan ={currenUser.lan ||0}/> : <div />}
                              
                             </Card.Body>
                         </Card>

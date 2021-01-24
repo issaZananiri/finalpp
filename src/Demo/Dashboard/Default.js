@@ -3,8 +3,8 @@ import { Row, Col, Card, Table, Label } from 'react-bootstrap';
 import axios from "axios";
 import Aux from "../../hoc/_Aux";
 import avatar1 from '../../assets/images/user/avatar-2.jpg';
-
-
+import { observer, inject } from 'mobx-react'
+import ReactSnackBar from "react-js-snackbar";
 
 
 class Dashboard extends React.Component {
@@ -12,7 +12,10 @@ class Dashboard extends React.Component {
         super()
         this.state = {
             packages: [],
-            drivers: []
+            drivers: [],
+            contact:[],
+            show:false,
+            showing:false
 
 
         }
@@ -33,24 +36,30 @@ class Dashboard extends React.Component {
                                     <h6 className="mb-1">{val.name}</h6>
                                     <p className="m-0">{val.phoneNumber}</p>
                                 </td>
-                                <td>
-                                    <h6 className="text-muted"><i className="fa fa-circle text-c-green f-10 m-r-15" />11 MAY 12:56</h6>
-                                </td>
-                                <td><a href='track' className="label theme-bg2 text-white f-12">Track</a><a href='Popup' className="label theme-bg text-white f-12">Assign Orders</a>
+                          
+                                <td><a href='track' Style="float: right;" onClick={()=>this.save(val)} className="label theme-bg2 text-white f-12">Track</a><a href='Orders' Style="float: right;"  className="label theme-bg text-white f-12">Assign Orders</a>
 
                                 </td>
-                                <td><span name={val._id} onClick={() => this.removeDriver(val._id)}><i className="fa fa-times trash1"></i></span></td>
+                                <td><span name={val._id} onClick={() => this.removeDriver(val._id)}><i className="fa fa-times trash1">   
+                                   <ReactSnackBar Icon={<span>🦄</span>} Show={this.state.show}>
+                        The Driver has been deleted .
+                    </ReactSnackBar></i></span></td>
 
                             </tr>
-
-
-
                         </tbody>
                     </Table>
                 </Card.Body>
             </Card>
         )
     }
+
+ 
+    save(userName){
+        localStorage.clear()
+        localStorage.setItem('currentUser', JSON.stringify(userName))    
+    }
+
+    
 
     orders = async () => {
         const ordersFromServer = await axios.get('http://localhost:8080/totalOrders')
@@ -59,12 +68,18 @@ class Dashboard extends React.Component {
 
         })
     }
+    Contact = async () => {
+        const contactFromServer = await axios.get('http://localhost:8080/contacts')
+        this.setState({
+            contact: contactFromServer.data.drivers
+
+        })
+    }
     drivers = async () => {
         const driversFromServer = await axios.get('http://localhost:8080/drivers')
         console.log(driversFromServer.data.drivers[0].name)
         this.setState({
             drivers: driversFromServer.data.drivers
-
         })
     }
 
@@ -79,15 +94,20 @@ class Dashboard extends React.Component {
         return count
     }
     removeDriver = async (e) => {
+        
+        if (this.state.Showing) return;
+        this.setState({show: true, showing:true})
+        setTimeout(() => {
+          this.setState({show: false, showing:false});
+        }, 2000);
         await axios.delete(`http://localhost:8080/deleteaccount/${e}`)
         this.drivers()
     }
 
-
-
     componentDidMount() {
         this.orders()
         this.drivers()
+        this.Contact()
     }
 
     render() {
@@ -115,7 +135,7 @@ class Dashboard extends React.Component {
                     <Col md={6} xl={4}>
                         <Card>
                             <Card.Body>
-                                <h6 className='mb-4'>Rejected Deliveries</h6>
+                                <h6 className='mb-4'>Undelivered :</h6>
                                 <div className="row d-flex align-items-center">
                                     <div className="col-9">
                                         <h3 className="f-w-300 d-flex align-items-center m-b-0"><i className="feather icon-arrow-down text-c-red f-30 m-r-5" />{this.state.packages.length - this.received()}</h3>
@@ -135,7 +155,7 @@ class Dashboard extends React.Component {
                                 <h6 className='mb-4'>Delivered :</h6>
                                 <div className="row d-flex align-items-center">
                                     <div className="col-9">
-                                        <h3 className="f-w-300 d-flex align-items-center m-b-0"><i className="feather icon-arrow-up text-c-green f-30 m-r-5" />{this.received()}</h3>
+                                        <h3 className="f-w-300 d-flex align-items-center m-b-0"><i className="feather  icon-map-pin  text-c-green f-30 m-r-5" />{this.received()}</h3>
                                     </div>
 
 
@@ -163,23 +183,12 @@ class Dashboard extends React.Component {
                                     </div>
                                     <div className="col">
                                         <h3 className="f-w-300">10</h3>
-                                        <span className="d-block text-uppercase">Total Clusters </span>
+                                        <span className="d-block text-uppercase">Total Orders </span>
                                     </div>
                                 </div>
                             </Card.Body>
-                            <Card.Body>
-                                <div className="row d-flex align-items-center">
-                                    <div className="col-auto">
-                                        <i className="feather icon-map-pin f-30 text-c-blue" />
-                                    </div>
-
-                                    <div className="col">
-                                        <h3 className="f-w-300">{this.state.packages.length - this.received()}</h3>
-                                        <span className="d-block text-uppercase">total locations</span>
-                                    </div>
-                                </div>
-
-                            </Card.Body>
+                          
+                          
                         </Card>
                     </Col>
 
@@ -189,4 +198,6 @@ class Dashboard extends React.Component {
         );
     }
 }
-export default Dashboard;
+
+
+export default Dashboard

@@ -1570,3 +1570,16 @@ pre[class*=language-]:after, pre[class*=language-]:before{
         display: none;
     }
 }
+.table td, .table th {
+    border-top: 1px solid #eaeaea;
+  
+    white-space: nowrap;
+    padding: 1.05rem 0.75rem;
+}
+
+
+.table th, .table td {
+    padding: 0.75rem;
+    vertical-align: top;
+    /* border-top: 1px solid #dee2e6; */
+}
