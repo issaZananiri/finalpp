@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Order from './Order'
 import axios from "axios";
+import NVD3Chart from 'react-nvd3';
 import ReactSnackBar from "react-js-snackbar";
 export default function Orders() {
     const [orders, setOrders] = useState([]);
@@ -21,18 +22,11 @@ export default function Orders() {
         setDrivers( driversFromServer.data.drivers);
     }
   
-    const haveReceived = () => {
-
-        if (sh.Showing) return;
-        setSh({show: true, showing:true})
-        setTimeout(() => {
-          setSh({show: false, showing:false});
-        }, 2000);
-
-    }
+    
     useEffect(() => {
         getOrders();
         getdrivers();
+        piec();
     }, [])
 
     useEffect(()=>{
@@ -43,7 +37,26 @@ export default function Orders() {
     const handleSelect = (e) => {
         setDriver(e.target.value)
     }
+   const  piec = ()=>{
+        let datum = [
+            {key: "Received", y:orders.length, color: "#ff8a65"},
+        
+            {key: "Not Received", y: orders.length  , color: "#1de9b6"},
+        
+        ];
+        return datum;
 
+    }
+    const received = () => {
+        let count = 0
+        const order = getOrders()
+        for (let i = 0; i < order.length; i++) {
+            if (order[i].received) {
+                count++;
+            }
+        }
+        return count
+    }
     return (
 
         <div className="ordersContainer">
@@ -56,7 +69,7 @@ export default function Orders() {
                         {drivers.map(v => <option value={v._id}>{v.name}</option> )}
                     </select>
                 </div>
-              
+                
                 <div id="header" >
 
 
@@ -76,6 +89,7 @@ export default function Orders() {
                     {orders.filter(v => !v.assignedTO).map(v => <Order v={v} key={v._id}  driver ={driverSelected} r={refresh} refresh={setRefresh}/>)}
                     
                 </div>
+
             </div>
         </div>
 

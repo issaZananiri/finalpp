@@ -12,10 +12,9 @@ class GoogleMap extends React.Component {
     constructor() {
         super()
         this.state = {
-  
             packages: [],
-            drivers: []
-
+            drivers: [],
+            driverTrack :{}
         }
     }
 
@@ -36,41 +35,40 @@ class GoogleMap extends React.Component {
         }
         return count
     }
-    orders = async () => {
-        const ordersFromServer = await axios.get('http://localhost:8080/totalOrders')
-        this.setState({
-            packages: ordersFromServer.data.drivers
 
+    orders = async () => {
+        const currentUser = this.checkLocalStorage()
+        if(!currentUser){
+            return
+        }
+        const ordersFromServer = await axios.post('http://localhost:8080/orders',{userName :currentUser.userName, password : currentUser.password } )
+
+        this.setState({
+            packages: ordersFromServer.data.packages
         })
     }
 
-    piec = ()=>{
+    piec = async ()=>{
+        const x = this.received()
+        const y = this.state.packages.length -x
         let datum = [
-            {key: "Received", y:this.received(), color: "#ff8a65"},
-        
-            {key: "Not Received", y: this.state.packages.length -this.received() , color: "#1de9b6"},
-        
+            {key: "Received", y:x, color: "#ff8a65"},
+            {key: "Not Received", y: y, color: "#1de9b6"},
         ];
         return datum;
-
     }
     
     drivers = async () => {
         const driversFromServer = await axios.get('http://localhost:8080/drivers')
-        console.log(driversFromServer.data.drivers[0].name)
         this.setState({
             drivers: driversFromServer.data.drivers
-
         })
-        
     }
    
-
     componentDidMount() {
-     
         this.orders()
         this.drivers()
-    this.piec()
+        this.piec()
     }
 
   
@@ -79,7 +77,6 @@ class GoogleMap extends React.Component {
         if (!currentUser) {
             return {}
         }
-        console.log(currentUser)
         return currentUser
     }
    
@@ -99,11 +96,9 @@ class GoogleMap extends React.Component {
                             </Card.Header>
                             <Card.Body>
                               {currenUser ? <MapContainer lat={currenUser.lat ||0} lan ={currenUser.lan ||0}/> : <div />}
-                             
                             </Card.Body>
                         </Card>
                     </Col>
-                    <NVD3Chart id="ch" id="chart" height={600} datum={this.piec} type="pieChart"  x="key" y='y'  />
                 </Row>
             </Aux>
             </div>
