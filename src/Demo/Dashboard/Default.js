@@ -69,10 +69,9 @@ class Dashboard extends React.Component {
         })
     }
     Contact = async () => {
-        const contactFromServer = await axios.get('http://localhost:8080/contacts')
+        const contactFromServer = await axios.get('http://localhost:8080/Dashboard/contacts')
         this.setState({
-            contact: contactFromServer.data.drivers
-
+            contact: contactFromServer.data.contacts
         })
     }
     drivers = async () => {
@@ -102,6 +101,26 @@ class Dashboard extends React.Component {
         }, 2000);
         await axios.delete(`http://localhost:8080/deleteaccount/${e}`)
         this.drivers()
+    }
+
+    renderContacts(v){
+        return (
+            <Card>
+            <Card.Body className='border-bottom'>
+                <div className="row d-flex align-items-center">
+                    <div className="col-auto">
+                        <i className="feather icon-bell f-30 text-c-green" />
+                    </div>
+                    <div className="col">
+                        <h3 className="f-w-300">{v.name}</h3>
+                        <span className="d-block text-uppercase">{v.text} </span>
+                    </div>
+                </div>
+            </Card.Body>
+          
+          
+        </Card>
+        )
     }
 
     componentDidMount() {
@@ -175,21 +194,7 @@ class Dashboard extends React.Component {
                         {this.state.drivers && this.state.drivers.map(v => this.makeRow(v))}
                     </Col>
                     <Col md={6} xl={4}>
-                        <Card>
-                            <Card.Body className='border-bottom'>
-                                <div className="row d-flex align-items-center">
-                                    <div className="col-auto">
-                                        <i className="feather icon-zap f-30 text-c-green" />
-                                    </div>
-                                    <div className="col">
-                                        <h3 className="f-w-300">10</h3>
-                                        <span className="d-block text-uppercase">Total Orders </span>
-                                    </div>
-                                </div>
-                            </Card.Body>
-                          
-                          
-                        </Card>
+                     {this.state.contact.map(v => this.renderContacts(v) )}
                     </Col>
 
 
